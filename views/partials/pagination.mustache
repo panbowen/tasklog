@@ -1,0 +1,7 @@
+<div class="text-center">
+<ul class="pagination">
+  {{#pages}}
+  <li class="{{#disabled?}}disabled{{/disabled?}} {{#active?}}active{{/active?}}"><a {{#value}}href="?to={{controller}}&page={{value}}"{{/value}}>{{& name}}</a></li>
+  {{/pages}}
+</ul>
+</div>

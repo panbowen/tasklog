@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Invoice</title>
+<style>
+body {
+  border: 0;
+  margin: 72px 72px;
+  font-size: 11px;
+  font-family: sans-serif;
+}
+
+table {
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  border-collapse: collapse;
+}
+
+tr {
+  padding: 0px;
+  margin: 0px;
+}
+
+h1 {
+  border-top: 1px thin #eee;
+  padding: 0;
+  margin: 0;
+  padding-top: 20px;
+  font-size: 20px;
+}
+h3 {
+  font-size: 11px;
+  padding: 0;
+  margin: 0;
+}
+h2 {
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  border-top: 1.5px solid #aaa;
+  border-bottom: 1.5px solid #aaa;
+  padding: 4px;
+}
+td {
+  padding: 4px;
+}
+td.h3 {
+  padding: 0;
+  margin: 0;
+}
+.total-top td {
+  border-top: 0.5px solid #aaa;
+  padding: 10px;
+}
+.total-bottom td {
+  border-bottom: 1.5px solid #aaa;
+  padding: 10px;
+} 
+</style>
+</head>
+<body>
+
+<table class="table">
+  <tr> <td colspan="4" align="center"><h1> Office of Information Technology</h1> </td></tr>
+  <tr> <td class="h3" colspan="4" align="center"><h3> Microcomputer Support Services Group</h3></td> </tr>
+  <tr> <td colspan="4" align="center"><h2>INVOICE</h2></td> </tr>
+  <tr> <td colspan="4"><b>Bill to:</b></td> </tr>
+
+  <tr>
+    <td width="10%"><b>Name</b</td>
+    <td width="40%">{{name}}</td>
+    <td width="20%"><b>Our Invoice</b></td>
+    <td width="30%" align="right"></td>
+  </tr>
+
+  <tr>
+    <td><b>Department</b></td>
+    <td>{{department}}</td>
+    <td><b>Date Entered</b></td>
+    <td align="right">{{startDate}}</td>
+  </tr>
+
+  <tr>
+    <td><b>Address</b></td>
+    <td>{{address}}</td>
+    <td><b>Date Due</b></td>
+    <td align="right">{{endDate}}</td>
+  </tr>
+
+  <tr>
+    <td><b>Campus</b></td>
+    <td>{{campus}}</td>
+    <td><b>Department PO</b></td>
+    <td align="right"></td>
+  </tr>
+
+  <tr>
+    <td style="height: 24px;"></td>
+  </tr>
+
+  <tr>
+    <td colspan="4">
+      <table>
+        <tr>
+          <th align="left">Date of Work</th>
+          <th>Work Performed</th>
+          <th>Hours</th>
+          <th>Rate</th>
+          <th>Labor Charge</th>
+          <th align="right">Other Changes</th>
+        </tr>
+        <tr>
+          <td align="center">{{lastDate}}</td>
+          <td align="center">{{description}}</td>
+          <td align="center">{{hours}}</td>
+          <td align="center">{{rate}}</td>
+          <td align="center">{{total}}</td>
+          <td align="center">$0.00</td>
+        </tr>
+
+        <tr class="total-top">
+          <td colspan="2"></td>
+          <td align="left" colspan="2"><b>Subtotals</b></td>
+          <td align="center">{{total}}</td>
+          <td align="center">$0.00</td>
+        </tr>
+        <tr class="total-bottom">
+          <td colspan="2"></td>
+          <td align="left" colspan="3"><b>PLEASE PAY THIS AMOUNT</b></td>
+          <td align="center">{{total}}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <tr> <td colspan="4"><b>Payment Instructions</b></td></tr>
+  <tr> <td colspan="4" style="text-indent: 2em;"><b>Payment may be made through RIAS using the following:</b></td> </tr>
+  <tr> <td colspan="4" style="text-indent: 4em;"><b>Internal Supplier:</b> OIT CCS Application Development Services:</td> </tr>
+  <tr> <td colspan="4" style="text-indent: 4em;"><b>Internal item #:</b> 2240</td> </tr>
+
+</table>
+</body>
+</html>

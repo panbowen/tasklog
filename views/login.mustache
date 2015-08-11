@@ -1,0 +1,19 @@
+{{> header}}
+  
+<div id="login-wrapper">
+<div id="login" class="">
+
+  {{#error}}
+  <div id="alert" class="alert alert-danger"> {{error}} </div>
+  {{/error}}
+  
+  <h1>The Task Log</h1>
+  <form role="form" action="?to=login" method="POST" accept-charset="utf-8">
+    <input type="text" name="email" placeholder="Email Address" id="email" class="form-control" />
+    <input type="password" name="password" placeholder="Password" class="form-control" />
+    <input type="submit" class="center-block btn btn-default" value="Login" />
+  </form>
+</div>
+</div>
+
+{{> footer}}

@@ -1,0 +1,184 @@
+{{> header}}
+<script type="text/javascript" charset="utf-8">
+$(function(){
+  $("#create_project_form").click(function(){
+    $("#project_form")[0].reset();
+    $("#project_form").attr("action", "?to=create_project");
+    $("#project_form_dialog #project_form_label").html("Create project");
+    $("#project_form_dialog #project_form_submit").html("Create project");
+    $("#project_form_dialog #remove_project").hide();
+  });
+
+  $("#project_form_submit").click(function(){
+    $("#project_form").submit();
+  });
+
+  $("#project_form").submit(function(event){
+    project = $("#project_form").serializeJSON();
+    $.post($(event.target).attr("action"), {"project": project}, function(response){
+      if(response.status == "fail") {
+        $("#warnings").html(response.exceptions.join("<br>"));
+        $("#warnings").removeClass("hide");
+      } else if (response.status == "success") {
+        location.reload();
+      }
+    });
+    event.preventDefault();
+  });
+
+  $(".update_project_form").click(function(e){
+    project = $(e.target).data("project");
+    $("#project_form")[0].reset();
+    $("#project_form").attr("action", "?to=update_project&id=" + project.id);
+    $("#project_form_dialog #project_form_label").html("Update Project #" + project.id);
+    $("#project_form_dialog #project_form_submit").html("Update project");
+    $("#project_form_dialog #remove_project").data("projectId", project.id);
+    $("#project_form_dialog #remove_project").show();
+    $("#project_form").populate(project);
+  });
+
+  $("#remove_project").click(function(e){
+    projectId = $(e.target).data("projectId");
+    $.get("?to=remove_project&id=" + projectId, function(response){
+      if(response.status == "fail") {
+        $("#warnings").html(response.exceptions.join("<br>"));
+        $("#warnings").removeClass("hide");
+      } else if (response.status == "success") {
+        location.reload();
+      }
+    });
+  });
+
+  dataTable = $("#projects").dataTable({
+      "paging": false,
+      "info": false,
+      "scrollY": 400,
+      "order": [[0, "asc"]],
+      "columnDefs": [
+        {"orderable": false, "targets": 6}
+        {{#currentUser:admin?}} , {"orderable": false, "targets": 7} {{/currentUser:admin?}}
+      ]
+      });
+
+  $("#searchbox").keyup(function(){ dataTable.fnFilter(this.value); });
+  
+});
+</script>
+<div id="wrapper" class="wrapper">
+  {{> index_header}}
+
+  <div id="stage" class="stage">
+
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <form class="form form-inline">
+          {{#currentUser:admin?}}
+          <a href="#" data-toggle="modal" id="create_project_form" data-target="#project_form_dialog" class="btn btn-sm btn-primary">Create project</a>
+          {{/currentUser:admin?}}
+          <div class="form-group pull-right">
+            <input class="form-control input-sm" placeholder="Search" type="text" id="searchbox"> 
+          </div>
+        </form>
+      </div>
+
+      <div class="panel-body">
+        <table class="table" id="projects">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Weekly hours</th>
+              <th>Monthly hours</th>
+              <th>Quarterly hours</th>
+              <th>Annually hours</th>
+              <th></th>
+              {{#currentUser:admin?}}<th></th>{{/currentUser:admin?}}
+            </tr>
+          </thead>
+          <tbody>
+          {{#projects}}
+          <tr>
+            <td>
+
+              {{^currentUser:admin?}}
+              {{name}}
+              {{/currentUser:admin?}}
+
+              {{#currentUser:admin?}}
+              <a href="#" class="update_project_form" data-project='{"name": "{{name}}", "id": "{{id}}", "description": "{{description}}", "bill_to_name": "{{bill_to_name}}", "bill_to_address": "{{bill_to_address}}", "bill_to_campus": "{{bill_to_campus}}", "bill_to_department": "{{bill_to_department}}"}' data-target="#project_form_dialog" data-toggle="modal">{{name}}</a>
+              {{/currentUser:admin?}}
+
+            </td>
+            <td> {{description}}</td>
+            <td> {{weekly}}</td>
+            <td> {{monthly}}</td>
+            <td> {{quarterly}}</td>
+            <td> {{annually}}</td>
+            <td> <a href="?to=index&project={{id}}">select</a> </td>
+            {{#currentUser:admin?}}<td> <a href="?to=invoices&project={{id}}">Invoice</a> </td>{{/currentUser:admin?}}
+          </tr>
+          {{/projects}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{{> footer}}
+
+<div class="modal fade" id="project_form_dialog" tabindex="-1" role="dialog" aria-labelledby="project_form_label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="project_form_label"></h4>
+      </div>
+      <div class="modal-body">
+        <form id="project_form" role="form" class="form-validate" method="POST">
+          <div class="alert alert-danger hide" id="warnings"> </div>
+
+          <div class="form-group">
+            <label for="name">Project name</label>
+            <input type="text" class="form-control" data-validation="required" data-validation-error-msg="Project name is required" name="name" id="name" placeholder="Project name">
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <input type="text" class="form-control" name="description" id="description" placeholder="Description">
+          </div>
+
+          <fieldset>
+            <legend>Billing information</legend>
+            <div class="form-group">
+              <label for="description">Name</label>
+              <input type="text" class="form-control" name="bill_to_name" id="bill_to_name" placeholder="Name">
+            </div>
+
+            <div class="form-group">
+              <label for="description">Department</label>
+              <input type="text" class="form-control" name="bill_to_department" id="bill_to_department" placeholder="Department">
+            </div>
+
+            <div class="form-group">
+              <label for="description">Address</label>
+              <input type="text" class="form-control" name="bill_to_address" id="bill_to_address" placeholder="Address">
+            </div>
+
+            <div class="form-group">
+              <label for="description">Campus</label>
+              <input type="text" class="form-control" name="bill_to_campus" id="bill_to_campus" placeholder="Campus">
+            </div>
+          </fieldset>
+
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" id="remove_project">Remove project</button>
+        <button type="button" id="project_form_submit" class="btn btn-primary"></button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,85 @@
+<div class="modal fade" id="user_form_dialog" tabindex="-1" role="dialog" aria-labelledby="user_form_label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="user_form_label"></h4>
+      </div>
+      <div class="modal-body">
+        <form id="user_form" role="form" class="form-validate" method="POST">
+          <div class="alert alert-danger hide" id="warnings"> </div>
+
+          <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" data-validation="required" class="form-control" data-validation-error-msg="First name is required" name="first_name" id="first_name" placeholder="First Name">
+          </div>
+
+          <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" class="form-control" data-validation="required" data-validation-error-msg="Last name is required" name="last_name" id="last_name" placeholder="Last Name">
+          </div>
+
+          <div class="form-group" id="email_field">
+            <label for="email">Email</label>
+            <input type="text" data-validation-error-msg="Invalid email" class="form-control" data-validation="email" name="email" placeholder="Email">
+          </div>
+
+          <div id="password_group">
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" data-validation-error-msg="Must provide a password"
+              {{#controller:create_user?}}
+              data-validation="required"
+              {{/controller:create_user?}}
+              class="form-control" name="password" placeholder="Password">
+            </div>
+
+            <div class="form-group">
+              <label for="confirm_password">Confirm password</label>
+              <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Confirm password">
+            </div>
+          </div>
+
+          <div class="form-group" id="roles_field">
+            <label for="roles">Roles</label>
+            {{#roles}}
+            <div class="checkbox"> <label> <input type="checkbox" data-validation="checkbox_group" data-validation-error-msg="Need to choose at least 1 item" data-validation-qty="min1" name="roles[]" value="{{code}}"> {{name}} </label> </div>
+            {{/roles}}
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" id="remove_user">Remove user</button>
+        <button type="button" id="user_form_submit" class="btn btn-primary"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+$(function(){
+  $("#warnings").addClass("hide");
+  $("#user_form_dialog #remove_user").hide();
+
+  $("#user_form").submit(function(event){
+    user = $("#user_form").serializeJSON();
+    $.post($(event.target).attr("action"), {"user": user}, function(response){
+      if(response.status == "fail") {
+        $("#warnings").html(response.exceptions.join("<br>"));
+        $("#warnings").removeClass("hide");
+      } else if (response.status == "success") {
+        location.reload();
+      }
+    });
+    event.preventDefault();
+    });
+  });
+
+  $("#user_form_submit").click(function(){
+    $("#user_form").submit();
+  });
+
+</script>

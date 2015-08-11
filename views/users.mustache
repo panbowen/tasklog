@@ -1,0 +1,101 @@
+{{> header}}
+<script type="text/javascript" charset="utf-8">
+$(function(){
+  $("#create_user_form").click(function(){
+    $("#user_form")[0].reset();
+    $("#user_form").attr("action", "?to=create_user");
+    $("#user_form_dialog #user_form_label").html("Create user");
+    $("#user_form_dialog #user_form_submit").html("Create user");
+    $("#user_form #password_group").show();
+    $("#user_form_dialog #remove_user").hide();
+    $("#warnings").addClass("hide");
+  });
+
+  $("#user_form_submit").click(function(){
+    $("#user_form").submit();
+  });
+
+
+  $(".update_user_form").click(function(e){
+    user = $(e.target).data("user");
+    $("#user_form")[0].reset();
+    $("#user_form").attr("action", "?to=update_user&id=" + user.id);
+    $("#user_form_dialog #user_form_label").html("Update user #" + user.id);
+    $("#user_form_dialog #user_form_submit").html("Update user");
+    $("#user_form_dialog #remove_user").data("userId", user.id);
+    $("#user_form_dialog #remove_user").show();
+    $("#warnings").addClass("hide");
+    $("#user_form").populate(user);
+    $("#user_form #password").val("");
+    $("#user_form #confirm_password").val("");
+  });
+
+  $("#remove_user").click(function(e){
+    userId = $(e.target).data("userId");
+    $.get("?to=remove_user&id=" + userId, function(response){
+      if(response.status == "fail") {
+        $("#warnings").html(response.exceptions.join("<br>"));
+        $("#warnings").removeClass("hide");
+      } else if (response.status == "success") {
+        location.reload();
+      }
+    });
+  });
+
+  dataTable = $("#users").dataTable({
+      "paging": false,
+      "info": false,
+      "scrollY": 400,
+      "order": [[0, "asc"]],
+      });
+
+  $("#searchbox").keyup(function(){ dataTable.fnFilter(this.value); });
+
+});
+</script>
+<div id="wrapper" class="wrapper">
+  {{> index_header}}
+
+  <div id="stage" class="stage">
+
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <form class="form form-inline">
+          <a href="#" data-toggle="modal" id="create_user_form" data-target="#user_form_dialog" class="btn btn-sm btn-primary">Create user</a>
+          <div class="form-group pull-right">
+            <input class="form-control input-sm" placeholder="Search" type="text" id="searchbox"> 
+          </div>
+        </form>
+      </div>
+      <div class="panel-body">
+        <table class="table" id="users">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Weekly hours</th>
+              <th>monthly hours</th>
+              <th>Quarterly hours </th>
+              <th>Annually hours</th>
+            </tr>
+          </thead>
+          <tbody>
+          {{#users}}
+          <tr>
+            <td> <a href="#" data-target="#user_form_dialog" data-toggle="modal" data-user='{"id": "{{id}}", "first_name": "{{first_name}}", "last_name": "{{last_name}}", "email": "{{email}}", "roles": {{roles}} }' class="update_user_form">{{first_name}} {{last_name}}</a></td>
+            <td> {{weekly}} </td>
+            <td> {{monthly}} </td>
+            <td> {{quarterly}} </td>
+            <td> {{annually}} </td>
+          </tr>
+          {{/users}}
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+  </div>
+  {{> footer}}
+
+  {{> user_dialog}}

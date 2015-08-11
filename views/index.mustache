@@ -1,0 +1,148 @@
+{{> header}}
+
+<div id="wrapper" class="wrapper">
+  {{> index_header}}
+  <div id="stage" class="stage">
+    <div class="col-md-3" style="padding-left: 0;">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">New Task Log</h3>
+        </div>
+
+        <div class="panel-body">
+          <form action="?to=create_log" role="form" method="POST">
+
+            <div class="form-group">
+              <label for="project" class="control-label">Project</label>
+              <select id="project_selection" class="form-control" name="project">
+                {{#projects}}
+                <option {{#selected}}selected{{/selected}} value="{{id}}">{{name}}</option>
+                {{/projects}}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="type" class="control-label">Type</label>
+              <select id="type_selection" class="form-control" name="type">
+                {{#types}}
+                <option {{#selected}}selected{{/selected}} value="{{value}}">{{name}}</option>
+                {{/types}}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="date" class="control-label">Date</label>
+
+              <div class="input-group date-picker">
+                <input class="form-control" data-format="MM/dd/yyyy"  type="text" name="date" value="{{date}}" >
+                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span>
+              </div>
+
+            </div>
+
+            <div class="form-group">
+              <label for="hours" class="control-label">Hours</label>
+              <input data-validation-error-msg="Must be numbers" data-validation="number" data-validation-allowing="float" class="form-control" data-format="HH:mm PP"  type="text" name="hours" value="{{hours}}" >
+            </div>
+
+            <div class="form-group">
+              <label for="description" class="control-label">Description</label>
+              <textarea id="description" name="description" class="form-control" rows="4"></textarea>
+            </div>
+
+            <input type="submit" class="pull-right btn btn-primary" value="Submit" />
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-md-9" id="logs-panel" style="padding-right: 0;">
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <form action="." method="GET" class="form form-inline">
+            <input type="hidden" name="to" value="index">
+            <h3 class="panel-title">Task logs from
+
+              <div class="form-group" style="width: 8em;">
+                <div class="input-group input-group-sm date-picker">
+                  <input class="form-control" type="text" value="{{start}}" name="start"> 
+                  <span class="input-group-addon"><i class="glyphicon glyphicon-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span>
+                </div>
+              </div>
+
+              to
+
+              <div class="form-group" style="width: 8em;">
+                <div class="input-group input-group-sm date-picker">
+                  <input class="form-control" type="text" value="{{end}}" name="end"> 
+                  <span class="input-group-addon"><i class="glyphicon glyphicon-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span>
+                </div>
+              </div>
+
+              <button class="form-control input-sm" type="submit"><i class="glyphicon glyphicon-refresh"></i></button>
+
+              <div class="form-group" style="float: right;">
+                <input class="form-control input-sm" placeholder="Search" type="text" id="searchbox"> 
+              </div>
+
+
+            </form>
+          </div>
+
+          <div class="panel-body">
+            <table id="logs" class="table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  {{#currentUser:admin?}}<th>Creator</th>{{/currentUser:admin?}}
+                  <th>Project</th>
+                  <th>Description</th>
+                  <th>Hours</th>
+                </tr>
+              </thead>
+              <tbody>
+              {{#logs}}
+              <tr>
+                <td>{{date}}</td>
+                <td>{{type}}</td>
+                {{#currentUser:admin?}}<td>{{creator}}</td>{{/currentUser:admin?}}
+                <td>{{project}}</td>
+                <td>{{description}}</td>
+                <td>{{hours}}</td>
+              </tr>
+              {{/logs}}
+              </tbody>
+            </table>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+{{> footer}}
+
+<script>
+$(function(){
+
+    $("#project_selection").focus();
+
+    $(".date-picker").datetimepicker({ pickTime: false });
+
+    $(".time-picker").datetimepicker({ pickDate: false });
+
+    dataTable = $("#logs").dataTable({
+      "paging": false,
+      "info": false,
+      "scrollY": 400,
+      "order": [[0, "desc"]]
+    });
+
+    $("#searchbox").keyup(function(){ dataTable.fnFilter(this.value); });
+
+});
+</script>

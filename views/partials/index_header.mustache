@@ -1,0 +1,49 @@
+<div id="header" class="page-header">
+  <h1><a class="no-decoration" href=".">{{currentUser:firstName}}'s Task Logs</a>
+
+    <small style="font-size: 16px;">
+        <span class="label label-default">This week: {{currentUser:thisWeek}}</span>
+        <span class="label label-default">Weekly: {{currentUser:weekly}}</span>
+
+        <span class="label label-default">Monthly: {{currentUser:monthly}}</span>
+        <span class="label label-default">Quarterly: {{currentUser:quarterly}}</span>
+        <span class="label label-default">Annually: {{currentUser:annually}}</span>
+    </small>
+    
+    <span class="pull-right">
+    <a id="settings_entry" href="#" data-toggle="modal" data-target="#user_form_dialog"><small style="font-size: 18px">Settings</small></a>
+    <a href="?to=logout"><small style="font-size: 18px">Log out</small></a>
+    </span>
+  </h1> 
+</div>
+
+{{#args:warnings}}<div class="alert alert-danger">{{args:warnings}}</div>{{/args:warnings}}
+
+
+<div id="tabs" class="nav nav-tabs">
+  <li class="{{#controller:index?}}active{{/controller:index?}}"><a href="?to=index">Task logs</a></li>
+  {{#currentUser:admin?}}<li class="{{#controller:users?}}active{{/controller:users?}}"><a href="?to=users">Users</a></li>{{/currentUser:admin?}}
+  <li class="{{#controller:projects?}}active{{/controller:projects?}}"><a href="?to=projects">Projects</a></li>
+  {{#currentUser:admin?}}<li class="{{#controller:invoices?}}active{{/controller:invoices?}}"><a href="?to=invoices">Invoices</a></li>{{/currentUser:admin?}}
+  {{#controller:report?}}<li class="active"><a href="#">Report</a></li>{{/controller:report?}}
+</div>
+{{> user_dialog}}
+
+
+<script>
+$(function(){
+    
+  $("#settings_entry").click(function(){
+    $("#user_form")[0].reset();
+    $("#user_form").attr("action", "?to=setting");
+    $("#user_form_dialog #user_form_label").html("Settings");
+    $("#user_form_dialog #user_form_submit").html("Update settings");
+    $("#first_name").val("{{currentUser:firstName}}");
+    $("#last_name").val("{{currentUser:lastName}}");
+    $("#user_form #password_group").show();
+    $("#user_form #roles_field").hide();
+    $("#user_form #email_field").hide();
+    $("#user_form_dialog #remove_user").hide();
+  });
+});
+</script>
